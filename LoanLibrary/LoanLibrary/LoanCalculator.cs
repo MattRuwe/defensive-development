@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 
 namespace LoanLibrary
@@ -47,8 +50,14 @@ namespace LoanLibrary
             return (decimal)Math.Round(payment, 2);
         }
 
+
+        //This method was added later and doesn't work well with the current constructor
+
         public decimal CalculateRisk(decimal currentAvailableCredit, decimal currentUtilizedCredit, IEnumerable<MissedPayment> missedPayments, decimal totalMonthlyPaymentAmounts, decimal annualIncome, decimal totalAssets)
         {
+            //Check for credit utilized greater than current available credit
+
+
             decimal creditUtiltizationRatio = currentUtilizedCredit / currentAvailableCredit;
             decimal debtToIncomeRatio = totalMonthlyPaymentAmounts / (annualIncome / 12);
 
@@ -137,19 +146,82 @@ namespace LoanLibrary
 
             return creditRisk;
         }
-    }
 
-    public class Payment
-    {
-        public int PaymentNumber { get; set; }
-        public decimal Principal { get; set; }
-        public decimal Interest { get; set; }
-        public decimal PrincipalBalance { get; set; }
-    }
+        public IEnumerable<InterestRate> GetInterestRates()
+        {
+            var interestRates = new List<InterestRate>();
+            CreateDatabaseIfNotExists();
+            using(var conn = GetDbConnection())
+            {
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT * FROM InterestRates";
+                command.CommandType = CommandType.Text;
 
-    public class MissedPayment
-    {
-        public DateTime DueDate { get; set; }
-        public decimal Amount { get; set; }
+                
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var interestRate = new InterestRate()
+                        {
+                            MaxRiskRating = (decimal)(double)reader[1],
+                            Rate = (decimal)(double)reader[2]
+                        };
+
+                        interestRates.Add(interestRate);
+                    }
+                }
+            }
+
+            return interestRates;
+        }
+
+        //Abstract data access
+
+        private void CreateDatabaseIfNotExists()
+        {
+            var databaseFileNamePath = GetDatabaseFileNamePath();
+            if (!File.Exists(databaseFileNamePath))
+            {
+                SQLiteConnection.CreateFile(databaseFileNamePath);
+                using (var connection = GetDbConnection())
+                {
+                    var command = new SQLiteCommand("CREATE TABLE InterestRates (Id INTEGER PRIMARY KEY AUTOINCREMENT, MaxRiskRating REAL, Rate REAL)", connection);
+                    command.ExecuteNonQuery();
+
+                    var random = new Random();
+
+                    for (var i = 0; i < 100; i++)
+                    {
+                        command = connection.CreateCommand();
+
+                        command.CommandText = "INSERT INTO InterestRates (MaxRiskRating, Rate) VALUES (@MaxRiskRating, @Rate)";
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@MaxRiskRating", random.NextDouble());
+                        command.Parameters.AddWithValue("@Rate", random.NextDouble());
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        private static SQLiteConnection GetDbConnection()
+        {
+            var databaseFileNamePath = GetDatabaseFileNamePath();
+            var connection = new SQLiteConnection($"Data Source={databaseFileNamePath};version=3");
+            connection.Open();
+            return connection;
+        }
+
+        private static string GetDatabaseFileNamePath()
+        {
+            var databaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LoanCalc");
+            if (!Directory.Exists(databaseDirectory))
+                Directory.CreateDirectory(databaseDirectory);
+
+            var databaseFileNamePath = Path.Combine(databaseDirectory, "Loan.sqlite");
+            Console.WriteLine(databaseFileNamePath);
+            return databaseFileNamePath;
+        }
     }
 }

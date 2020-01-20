@@ -29,5 +29,15 @@ namespace LoanLibrary.Test
             Assert.AreEqual((decimal)principal, selectedPayment.Principal);
             Assert.AreEqual((decimal)principalBalance, selectedPayment.PrincipalBalance);
         }
+
+        [TestMethod]
+        public void GetInterestRates()
+        {
+            var calc = new LoanCalculator(10000, 0.08m, 36);
+
+            var interestRates = calc.GetInterestRates();
+
+            Assert.AreEqual(100, interestRates.Count());
+        }
     }
 }
