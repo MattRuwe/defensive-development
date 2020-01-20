@@ -129,7 +129,7 @@ namespace LoanLibrary
                     }
                 }
             }
-            else if(creditUtiltizationRatio > .50)
+            else if(creditUtiltizationRatio > .50m)
             {
 
             }
