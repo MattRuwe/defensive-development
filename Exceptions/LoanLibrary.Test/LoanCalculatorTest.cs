@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MyLibrary.Test
+namespace LoanLibrary.Test
 {
     [TestClass]
     public class LoanCalculatorTest
