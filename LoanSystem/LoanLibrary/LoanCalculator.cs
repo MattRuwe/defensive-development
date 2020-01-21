@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bogus;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -65,22 +66,22 @@ namespace LoanLibrary
             if (creditUtiltizationRatio > .75m)
             {
                 creditRisk += .1m;
-                if(totalMonthlyPaymentAmounts > 5000)
+                if (totalMonthlyPaymentAmounts > 5000)
                 {
                     creditRisk += .45m;
-                    if(missedPayments.Count() > 20)
+                    if (missedPayments.Count() > 20)
                     {
                         creditRisk += .15m;
                     }
-                    else if(missedPayments.Count() > 15)
+                    else if (missedPayments.Count() > 15)
                     {
                         creditRisk += .13m;
                     }
-                    else if(missedPayments.Count() > 10)
+                    else if (missedPayments.Count() > 10)
                     {
                         creditRisk += .10m;
                     }
-                    else if(missedPayments.Count() > 5)
+                    else if (missedPayments.Count() > 5)
                     {
                         creditRisk += .05m;
                     }
@@ -89,7 +90,7 @@ namespace LoanLibrary
                         creditRisk += .03m;
                     }
                 }
-                else if(totalMonthlyPaymentAmounts > 2500)
+                else if (totalMonthlyPaymentAmounts > 2500)
                 {
                     creditRisk += .30m;
                     if (missedPayments.Count() > 20)
@@ -138,7 +139,7 @@ namespace LoanLibrary
                     }
                 }
             }
-            else if(creditUtiltizationRatio > .50m)
+            else if (creditUtiltizationRatio > .50m)
             {
 
             }
@@ -151,13 +152,13 @@ namespace LoanLibrary
         {
             var interestRates = new List<InterestRate>();
             CreateDatabaseIfNotExists();
-            using(var conn = GetDbConnection())
+            using (var conn = GetDbConnection())
             {
                 var command = conn.CreateCommand();
                 command.CommandText = "SELECT * FROM InterestRates";
                 command.CommandType = CommandType.Text;
 
-                
+
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -176,6 +177,11 @@ namespace LoanLibrary
             return interestRates;
         }
 
+        public InterestRate GetInterestRateForUser(int userId)
+        {
+            return null;
+        }
+
         //Abstract data access
 
         private void CreateDatabaseIfNotExists()
@@ -189,16 +195,36 @@ namespace LoanLibrary
                     var command = new SQLiteCommand("CREATE TABLE InterestRates (Id INTEGER PRIMARY KEY AUTOINCREMENT, MaxRiskRating REAL, Rate REAL)", connection);
                     command.ExecuteNonQuery();
 
+                    command = new SQLiteCommand("CREATE TABLE Users (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name Text, TotalAvailableCredit REAL, CreditUtilized REAL, AnnualIncome REAL)", connection);
+                    command.ExecuteNonQuery();
+
                     var random = new Random();
 
-                    for (var i = 0; i < 100; i++)
+                    for (var i = 1; i <= 100; i++)
                     {
                         command = connection.CreateCommand();
 
                         command.CommandText = "INSERT INTO InterestRates (MaxRiskRating, Rate) VALUES (@MaxRiskRating, @Rate)";
                         command.CommandType = CommandType.Text;
-                        command.Parameters.AddWithValue("@MaxRiskRating", random.NextDouble());
-                        command.Parameters.AddWithValue("@Rate", random.NextDouble());
+                        command.Parameters.AddWithValue("@MaxRiskRating", i / 100);
+                        command.Parameters.AddWithValue("@Rate", i / 2 / 100);
+                        command.ExecuteNonQuery();
+                    }
+
+                    var fakeUsers = new Faker<User>()
+                        .RuleFor(u => u.Name, f => f.Name.FullName())
+                        .RuleFor(u => u.TotalCreditAvailable, f => Math.Round(f.Random.Decimal(0, 20000), 2))
+                        .RuleFor(u => u.CreditUtilized, (f, u) => Math.Round(f.Random.Decimal(0, u.TotalCreditAvailable), 2))
+                        .RuleFor(u => u.AnnualIncome, f => Math.Round(f.Random.Decimal(10000, 200000), 2));
+                    for (var i = 0; i < 100; i++)
+                    {
+                        var user = fakeUsers.Generate();
+                        command.CommandText = "INSERT INTO Users (Name, TotalAvailableCredit, CreditUtilized, AnnualIncome) VALUES (@Name, @TotalAvailableCredit, @CreditUtilized, @AnnualIncome)";
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddWithValue("@Name", user.Name);
+                        command.Parameters.AddWithValue("@TotalAvailableCredit", user.TotalCreditAvailable);
+                        command.Parameters.AddWithValue("@CreditUtilized", user.CreditUtilized);
+                        command.Parameters.AddWithValue("@AnnualIncome", user.AnnualIncome);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -223,5 +249,15 @@ namespace LoanLibrary
             Console.WriteLine(databaseFileNamePath);
             return databaseFileNamePath;
         }
+    }
+
+    public class User
+    {
+        public int UserId { get; set; }
+        public string Name { get; set; }
+        public decimal TotalCreditAvailable { get; set; }
+        public decimal CreditUtilized { get; set; }
+        public decimal AnnualIncome { get; set; }
+
     }
 }
