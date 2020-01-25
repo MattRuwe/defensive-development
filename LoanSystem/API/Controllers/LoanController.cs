@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LoanLibrary;
 using Microsoft.AspNetCore.Mvc;
+using LoanFundamentals = API.DataContracts.LoanFundamentals;
 
 namespace API.Controllers
 {
