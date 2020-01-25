@@ -15,9 +15,7 @@ namespace LoanLibrary
             _interestRate = interestRate;
             _loanAmount = loanAmount;
         }
-
-
-        public IEnumerable<Payment> GetAmoritization()
+        public List<Payment> GetAmoritization()
         {
             var currentPricinpalBalance = _loanAmount;
             var returnValue = new List<Payment>();
