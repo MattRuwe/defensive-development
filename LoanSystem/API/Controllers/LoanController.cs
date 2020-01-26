@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using API.DataContracts;
 using LoanLibrary;
 using Microsoft.AspNetCore.Mvc;
 using LoanFundamentals = API.DataContracts.LoanFundamentals;
@@ -20,6 +18,19 @@ namespace API.Controllers
             var payments = loanCalc.GetAmoritization();
 
             return Ok(payments);
+        }
+
+        [HttpPost("Risk")]
+        public ActionResult<decimal> CalculateRisk(LoaneeCharacterisitic loaneeCharacterisitic)
+        {
+            var loanCalc = new LoanCalculator(0, 0, 0);
+
+            var risk = loanCalc.CalculateRisk(loaneeCharacterisitic.CurrentAvailableCredit,
+                loaneeCharacterisitic.CurrentAvailableCredit, loaneeCharacterisitic.MissedPayments,
+                loaneeCharacterisitic.TotalMonthlyPaymentAmounts, loaneeCharacterisitic.AnnualIncome,
+                loaneeCharacterisitic.TotalAssets);
+
+            return Ok(risk);
         }
     }
 }
