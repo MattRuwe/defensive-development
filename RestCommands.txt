@@ -1,0 +1,44 @@
+curl --request POST \
+  --url http://localhost:58597/api/Loan/Risk \
+  --header 'content-type: application/json' \
+  --data '{
+	"CurrentAvailableCredit": 10000,
+	"CurrentUtilizedCredit": 9999,
+	"MissedPayments": [
+		{
+			"DueDate": "2019-06-01",
+			"Amount": 260.00
+		},
+		{
+			"DueDate": "2016-04-06",
+			"Amount": 2600.00
+		},
+		{
+			"DueDate": "2015-08-12",
+			"Amount": 274.00
+		},
+		{
+			"DueDate": "2014-09-27",
+			"Amount": 26.00
+		},
+		{
+			"DueDate": "2017-06-10",
+			"Amount": 462.00
+		},
+		{
+			"DueDate": "2017-06-24",
+			"Amount": 143.00
+		},
+		{
+			"DueDate": "2012-05-30",
+			"Amount": 574.00
+		},
+		{
+			"DueDate": "2011-08-12",
+			"Amount": 72.00
+		}
+	],
+	"TotalMonthlyPaymentAmounts": 347.00,
+	"AnnualIncome": 75000,
+	"TotalAssets": 50000
+}'

@@ -32,5 +32,13 @@ namespace API.Controllers
 
             return Ok(risk);
         }
+
+        [HttpGet("InterestRates")]
+        public ActionResult<List<InterestRate>> GetInterestRates()
+        {
+            var loanCalc = new LoanCalculator(0, 0, 0);
+
+            return Ok(loanCalc.GetInterestRates());
+        }
     }
 }
