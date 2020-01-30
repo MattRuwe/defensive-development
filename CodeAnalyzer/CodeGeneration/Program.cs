@@ -32,7 +32,6 @@ namespace CodeGeneration
         {
             var propertyList = new List<PropertyDeclarationSyntax>();
 
-
             for (int i = 0; i < 50; i++)
             {
                 propertyList.Add(PropertyDeclaration(
@@ -47,21 +46,17 @@ namespace CodeGeneration
                             List<AccessorDeclarationSyntax>(
                                 new AccessorDeclarationSyntax[]
                                 {
-                                    AccessorDeclaration(
-                                            SyntaxKind.GetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            Token(SyntaxKind.SemicolonToken)),
-                                    AccessorDeclaration(
-                                            SyntaxKind.SetAccessorDeclaration)
-                                        .WithSemicolonToken(
-                                            Token(SyntaxKind.SemicolonToken))
+                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                                 }))));
             }
 
-            return value.WithMembers(List<MemberDeclarationSyntax>(propertyList.ToArray()));
+            return value.WithMembers(List<MemberDeclarationSyntax>(propertyList));
         }
 
-        private static List<string> _usedWords = new List<string>();
+        private static readonly List<string> _usedWords = new List<string>();
         private static string GetUniqueWord()
         {
             var rand = new Random();
