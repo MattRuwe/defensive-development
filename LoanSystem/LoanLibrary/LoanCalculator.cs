@@ -19,7 +19,7 @@ namespace LoanLibrary
         {
             var currentPricinpalBalance = _loanAmount;
             var returnValue = new List<Payment>();
-            var paymentAmount = CalculateMonthlyPayment(_loanAmount, _termInMonths, _interestRate);
+            var paymentAmount = CalculateMonthlyPayment();
             for (int i = 1; i <= _termInMonths; i++)
             {
                 var interestAmount = currentPricinpalBalance * (_interestRate / 12);
@@ -38,10 +38,10 @@ namespace LoanLibrary
             return returnValue;
         }
 
-        public decimal CalculateMonthlyPayment(decimal loanAmount, int termInMonths, decimal interestRate)
+        public decimal CalculateMonthlyPayment()
         {
-            var monthlyInterestRate = (double)(interestRate / 12);
-            var payment = (monthlyInterestRate * (double)loanAmount) / (1 - Math.Pow(1 + monthlyInterestRate, termInMonths * -1));
+            var monthlyInterestRate = (double)(_interestRate / 12);
+            var payment = (monthlyInterestRate * (double)_loanAmount) / (1 - Math.Pow(1 + monthlyInterestRate, _termInMonths * -1));
             return (decimal)Math.Round(payment, 2);
         }
     }

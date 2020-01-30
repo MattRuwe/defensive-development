@@ -15,9 +15,9 @@ namespace LoanLibrary.Test
         [DataRow(036, 2.08, 311.28, 311.43)]
         public void GetAmoritizationTest(int paymentNumber, double interest, double principal, double principalBalance)
         {
-            var calc = new LoanCalculator();
+            var calc = new LoanCalculator(10000, 0.08m, 36);
 
-            var amoritization = calc.GetAmoritization(10000, 0.08m, 36).ToList();
+            var amoritization = calc.GetAmoritization().ToList();
 
             foreach (var payment in amoritization)
             {
@@ -33,9 +33,9 @@ namespace LoanLibrary.Test
         [TestMethod]
         public void CalculateMonthlyPaymentTest()
         {
-            var calc = new LoanCalculator();
+            var calc = new LoanCalculator(10000, 0.08m, 36);
 
-            var payment = calc.CalculateMonthlyPayment(10000, 36, 0.08m);
+            var payment = calc.CalculateMonthlyPayment();
 
             Assert.AreEqual(313.36m, payment);
         }
