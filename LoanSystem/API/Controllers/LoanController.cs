@@ -13,9 +13,9 @@ namespace API.Controllers
         [HttpPost("AmortizationSchedule")]
         public ActionResult<IEnumerable<Payment>> AmortizationSchedule(LoanFundamentals loanFundamentals)
         {
-            var loanCalc = new LoanCalculator(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            var loanCalc = new LoanCalculator();
 
-            var payments = loanCalc.GetAmoritization();
+            var payments = loanCalc.GetAmoritization(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
 
             return Ok(payments);
         }
@@ -23,12 +23,19 @@ namespace API.Controllers
         [HttpPost("Risk")]
         public ActionResult<decimal> CalculateRisk(LoaneeCharacterisitic loaneeCharacterisitic)
         {
-            var loanCalc = new LoanCalculator(0, 0, 0);
+            var loanCalc = new LoanCalculator();
 
-            var risk = loanCalc.CalculateRisk(loaneeCharacterisitic.CurrentAvailableCredit,
-                loaneeCharacterisitic.CurrentAvailableCredit, loaneeCharacterisitic.MissedPayments,
-                loaneeCharacterisitic.TotalMonthlyPaymentAmounts, loaneeCharacterisitic.AnnualIncome,
-                loaneeCharacterisitic.TotalAssets);
+            var riskFactors = new RiskFactors()
+            {
+                AnnualIncome = loaneeCharacterisitic.AnnualIncome,
+                TotalAssets = loaneeCharacterisitic.TotalAssets,
+                CurrentUtilizedCredit = loaneeCharacterisitic.CurrentUtilizedCredit,
+                CurrentAvailableCredit = loaneeCharacterisitic.CurrentAvailableCredit,
+                MissedPayments = loaneeCharacterisitic.MissedPayments,
+                TotalMonthlyPaymentAmounts = loaneeCharacterisitic.TotalMonthlyPaymentAmounts
+            };
+
+            var risk = loanCalc.CalculateRisk(riskFactors);
 
             return Ok(risk);
         }
@@ -36,9 +43,9 @@ namespace API.Controllers
         [HttpGet("InterestRates")]
         public ActionResult<List<InterestRate>> GetInterestRates()
         {
-            var loanCalc = new LoanCalculator(0, 0, 0);
+            var dataAccess = new DataAccess();
 
-            return Ok(loanCalc.GetInterestRates());
+            return Ok(dataAccess.GetInterestRates());
         }
     }
 }
