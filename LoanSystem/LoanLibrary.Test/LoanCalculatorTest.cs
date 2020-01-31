@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LoanLibrary.Test
@@ -8,6 +10,17 @@ namespace LoanLibrary.Test
     [TestClass]
     public class LoanCalculatorTest
     {
+        private ServiceProvider _serviceProvider;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            var sc = new ServiceCollection();
+            sc.AddLoanServices();
+            _serviceProvider = sc.BuildServiceProvider();
+        }
+
+
         [TestMethod]
         [DataRow(1, 66.67, 246.69, 10000)]
         [DataRow(2, 65.02, 248.34, 9753.31)]
@@ -17,7 +30,7 @@ namespace LoanLibrary.Test
         public void GetAmoritizationTest(int paymentNumber, double interest, double principal, double principalBalance)
         {
             //Arrange
-            var calc = new LoanCalculator();
+            var calc = _serviceProvider.GetService<ILoanCalculator>();
 
             //Act
             var amoritization = calc.GetAmoritization(10000, 0.08m, 36).ToList();
@@ -38,7 +51,7 @@ namespace LoanLibrary.Test
         public void CalculateMonthlyPaymentTest()
         {
             //Arrange
-            var calc = new LoanCalculator();
+            var calc = _serviceProvider.GetService<ILoanCalculator>();
 
             //Act
             var payment = calc.CalculateMonthlyPayment(10000, 0.08m, 36);
@@ -55,7 +68,7 @@ namespace LoanLibrary.Test
         public void CalculateRiskTest(double annualIncome, double availableCredit, double creditUtilized, int missedPayments, double totalMonthlyPayments, double totalAssets, double riskResult)
         {
             //Arrange
-            var calc = new LoanCalculator();
+            var calc = _serviceProvider.GetService<ILoanCalculator>();
 
             var riskFactors = new RiskFactors()
             {

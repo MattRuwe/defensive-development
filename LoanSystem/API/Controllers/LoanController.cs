@@ -10,12 +10,19 @@ namespace API.Controllers
     [ApiController]
     public class LoanController : ControllerBase
     {
+        private ILoanCalculator _loanCalculator;
+        private IDataAccess _dataAccess;
+
+        public LoanController(ILoanCalculator loanCalculator, IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess;
+            _loanCalculator = loanCalculator;
+        }
+
         [HttpPost("AmortizationSchedule")]
         public ActionResult<IEnumerable<Payment>> AmortizationSchedule(LoanFundamentals loanFundamentals)
         {
-            var loanCalc = new LoanCalculator();
-
-            var payments = loanCalc.GetAmoritization(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            var payments = _loanCalculator.GetAmoritization(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
 
             return Ok(payments);
         }
@@ -23,7 +30,6 @@ namespace API.Controllers
         [HttpPost("Risk")]
         public ActionResult<decimal> CalculateRisk(LoaneeCharacterisitic loaneeCharacterisitic)
         {
-            var loanCalc = new LoanCalculator();
 
             var riskFactors = new RiskFactors()
             {
@@ -35,7 +41,7 @@ namespace API.Controllers
                 TotalMonthlyPaymentAmounts = loaneeCharacterisitic.TotalMonthlyPaymentAmounts
             };
 
-            var risk = loanCalc.CalculateRisk(riskFactors);
+            var risk = _loanCalculator.CalculateRisk(riskFactors);
 
             return Ok(risk);
         }
@@ -43,9 +49,15 @@ namespace API.Controllers
         [HttpGet("InterestRates")]
         public ActionResult<List<InterestRate>> GetInterestRates()
         {
-            var dataAccess = new DataAccess();
+            return Ok(_dataAccess.GetInterestRates());
+        }
 
-            return Ok(dataAccess.GetInterestRates());
+        [HttpGet("CreateDatabase")]
+        public ActionResult CreateDatabase()
+        {
+            _dataAccess.CreateDatabase();
+
+            return Ok();
         }
     }
 }

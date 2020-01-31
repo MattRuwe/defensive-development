@@ -4,8 +4,23 @@ using System.Linq;
 
 namespace LoanLibrary
 {
-    public class LoanCalculator
+    public interface ILoanCalculator
     {
+        List<Payment> GetAmoritization(decimal loanAmount, decimal interestRate, int termInMonths);
+        decimal CalculateMonthlyPayment(decimal loanAmount, decimal interestRate, int termInMonths);
+        decimal CalculateRisk(RiskFactors riskFactors);
+        decimal GetInterestRateForUser(int userId);
+    }
+
+    class LoanCalculator : ILoanCalculator
+    {
+        private IDataAccess _dataAccess;
+
+        public LoanCalculator(IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess;
+        }
+
         public List<Payment> GetAmoritization(decimal loanAmount, decimal interestRate, int termInMonths)
         {
             var currentPricinpalBalance = loanAmount;
@@ -327,10 +342,9 @@ namespace LoanLibrary
 
         public decimal GetInterestRateForUser(int userId)
         {
-            var dataAccess = new DataAccess();
 
-            var user = dataAccess.GetUser(userId);
-            var interestRates = dataAccess.GetInterestRates();
+            var user = _dataAccess.GetUser(userId);
+            var interestRates = _dataAccess.GetInterestRates();
 
 
             var riskFactors = new RiskFactors()
