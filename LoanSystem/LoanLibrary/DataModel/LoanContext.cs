@@ -2,9 +2,8 @@
 using Bogus;
 using Bogus.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
-namespace LoanLibrary
+namespace LoanLibrary.DataModel
 {
     internal class LoanContext : DbContext
     {

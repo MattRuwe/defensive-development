@@ -1,4 +1,4 @@
-﻿namespace LoanLibrary
+﻿namespace LoanLibrary.DataContracts
 {
     public class LoanFundamentals
     {

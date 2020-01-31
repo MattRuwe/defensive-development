@@ -1,6 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using LoanLibrary.Contracts;
+using LoanLibrary.DataContracts;
+using LoanLibrary.DataModel;
+using LoanLibrary.Implementations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +19,13 @@ namespace LoanLibrary.Test
         public void TestInitialize()
         {
             var sc = new ServiceCollection();
-            sc.AddLoanServices();
+            sc.AddDbContext<LoanContext>(o =>
+            {
+                o.UseInMemoryDatabase("LoanCalc");
+            });
+
+            sc.AddTransient<ILoanCalculator, LoanCalculator>();
+            sc.AddTransient<IDataAccess, DataAccess>();
             _serviceProvider = sc.BuildServiceProvider();
         }
 

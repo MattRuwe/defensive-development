@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LoanLibrary
+namespace LoanLibrary.DataContracts
 {
     public class MissedPayment
     {

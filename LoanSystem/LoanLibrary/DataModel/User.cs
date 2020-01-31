@@ -1,4 +1,4 @@
-﻿namespace LoanLibrary
+﻿namespace LoanLibrary.DataModel
 {
     public class User
     {

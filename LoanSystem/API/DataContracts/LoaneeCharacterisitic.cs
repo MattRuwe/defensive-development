@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using LoanLibrary;
+using LoanLibrary.DataContracts;
 
 namespace API.DataContracts
 {

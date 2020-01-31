@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using LoanLibrary.Contracts;
+using LoanLibrary.DataModel;
+using LoanLibrary.Implementations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

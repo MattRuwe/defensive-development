@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using API.DataContracts;
 using LoanLibrary;
+using LoanLibrary.Contracts;
+using LoanLibrary.DataContracts;
+using LoanLibrary.DataModel;
 using Microsoft.AspNetCore.Mvc;
 using LoanFundamentals = API.DataContracts.LoanFundamentals;
 

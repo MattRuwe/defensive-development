@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoanLibrary
+namespace LoanLibrary.DataContracts
 {
     public class RiskFactors
     {

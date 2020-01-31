@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LoanLibrary.Contracts;
+using LoanLibrary.DataContracts;
 
-namespace LoanLibrary
+namespace LoanLibrary.Implementations
 {
-    public interface ILoanCalculator
-    {
-        List<Payment> GetAmoritization(decimal loanAmount, decimal interestRate, int termInMonths);
-        decimal CalculateMonthlyPayment(decimal loanAmount, decimal interestRate, int termInMonths);
-        decimal CalculateRisk(RiskFactors riskFactors);
-        decimal GetInterestRateForUser(int userId);
-    }
-
     class LoanCalculator : ILoanCalculator
     {
         private IDataAccess _dataAccess;
