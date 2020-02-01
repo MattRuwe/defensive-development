@@ -15,8 +15,10 @@ namespace LoanLibrary.Test
         [DataRow(036, 2.08, 311.28, 311.43)]
         public void GetAmoritizationTest(int paymentNumber, double interest, double principal, double principalBalance)
         {
+            //Arrange
             var calc = new LoanCalculator(10000, 0.08m, 36);
 
+            //Act
             var amoritization = calc.GetAmoritization().ToList();
 
             foreach (var payment in amoritization)
@@ -24,6 +26,7 @@ namespace LoanLibrary.Test
                 Console.WriteLine($"{payment.PaymentNumber.ToString().PadLeft(3, '0')}-{payment.Interest + payment.Principal:C} {payment.Interest:C} {payment.Principal:C} {payment.PrincipalBalance:C}");
             }
 
+            //Assert
             var selectedPayment = amoritization[paymentNumber - 1];
             Assert.AreEqual((decimal)interest, selectedPayment.Interest);
             Assert.AreEqual((decimal)principal, selectedPayment.Principal);
@@ -31,13 +34,18 @@ namespace LoanLibrary.Test
         }
 
         [TestMethod]
-        public void CalculateMonthlyPaymentTest()
+        [DataRow(10000, 0.08, 36, 313.36)]
+        [DataRow(20000, 0.03, 60, 359.37)]
+        public void CalculateMonthlyPaymentTest(double loanAmount, double interestRate, int termInMonths, double expectedPayment)
         {
-            var calc = new LoanCalculator(10000, 0.08m, 36);
+            //Arrange
+            var calc = new LoanCalculator((decimal)loanAmount, (decimal)interestRate, termInMonths);
 
-            var payment = calc.CalculateMonthlyPayment();
+            //Act
+            var actualPayment = calc.CalculateMonthlyPayment();
 
-            Assert.AreEqual(313.36m, payment);
+            //Assert
+            Assert.AreEqual((decimal)expectedPayment, actualPayment);
         }
     }
 }
