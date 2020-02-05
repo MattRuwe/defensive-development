@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using API;
 using API.DataContracts;
 using LoanLibrary.DataContracts;
+using LoanLibrary.DataModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -97,7 +98,6 @@ namespace LoanLibrary.Test
             };
 
             var serializedLoaneeCharacterisitics = JsonConvert.SerializeObject(loaneeCharacterisitic);
-            Console.WriteLine($"serializedLoaneeCharacterisitics - {serializedLoaneeCharacterisitics}");
             var content = new StringContent(serializedLoaneeCharacterisitics, Encoding.UTF8, "application/json");
 
             //Act
@@ -107,6 +107,21 @@ namespace LoanLibrary.Test
 
             //Assert
             Assert.AreEqual("0.23", responseString);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration-Test")]
+        public async Task GetInterestRatesTest()
+        {
+            //Arrange
+
+            //Act
+            var response = await _client.GetAsync("/api/Loan/InterestRates");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<IList<InterestRate>>(responseString);
+            //Assert
+            Assert.AreEqual(100, result.Count);
         }
     }
 
