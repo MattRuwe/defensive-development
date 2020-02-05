@@ -22,6 +22,14 @@ namespace API.Controllers
             _loanCalculator = loanCalculator;
         }
 
+        [HttpPost]
+        public ActionResult<decimal> GetPayment(LoanFundamentals loanFundamentals)
+        {
+            var payment = _loanCalculator.CalculateMonthlyPayment(loanFundamentals.Principal, loanFundamentals.TermInMonths, loanFundamentals.InterestRate);
+
+            return Ok(payment);
+        }
+
         [HttpPost("AmortizationSchedule")]
         public ActionResult<IEnumerable<Payment>> AmortizationSchedule(LoanFundamentals loanFundamentals)
         {
