@@ -10,6 +10,16 @@ namespace API.Controllers
     [ApiController]
     public class LoanController : ControllerBase
     {
+        [HttpPost]
+        public ActionResult<decimal> GetPayment(LoanFundamentals loanFundamentals)
+        {
+            var loanCalc = new LoanCalculator(0, 0, 0);
+
+            var payment = loanCalc.CalculateMonthlyPayment(loanFundamentals.Principal, loanFundamentals.TermInMonths, loanFundamentals.InterestRate);
+
+            return Ok(payment);
+        }
+
         [HttpPost("AmortizationSchedule")]
         public ActionResult<IEnumerable<Payment>> AmortizationSchedule(LoanFundamentals loanFundamentals)
         {
