@@ -25,7 +25,7 @@ namespace API.Controllers
         [HttpPost]
         public ActionResult<decimal> GetPayment(LoanFundamentals loanFundamentals)
         {
-            var payment = _loanCalculator.CalculateMonthlyPayment(loanFundamentals.Principal, loanFundamentals.TermInMonths, loanFundamentals.InterestRate);
+            var payment = _loanCalculator.CalculateMonthlyPayment(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
 
             return Ok(payment);
         }
