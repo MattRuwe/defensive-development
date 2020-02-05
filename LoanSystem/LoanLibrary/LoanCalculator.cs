@@ -45,6 +45,7 @@ namespace LoanLibrary
 
         public decimal CalculateMonthlyPayment(decimal loanAmount, int termInMonths, decimal interestRate)
         {
+            LogMessage($"Calculating month payment: loanAmount={loanAmount}, termInMonths={termInMonths}, interestRate={interestRate}");
             var monthlyInterestRate = (double)(interestRate / 12);
             var payment = (monthlyInterestRate * (double)loanAmount) / (1 - Math.Pow(1 + monthlyInterestRate, termInMonths * -1));
             return (decimal)Math.Round(payment, 2);
@@ -53,8 +54,8 @@ namespace LoanLibrary
 
         public decimal CalculateRisk(decimal currentAvailableCredit, decimal currentUtilizedCredit, List<MissedPayment> missedPayments, decimal totalMonthlyPaymentAmounts, decimal annualIncome, decimal totalAssets)
         {
+            LogMessage($"Getting risk rating: currentAvailableCredit={currentAvailableCredit}, currentUtilizedCredit={currentUtilizedCredit}, totalMonthlyPaymentAmounts={totalMonthlyPaymentAmounts}, annualIncome={annualIncome}, totalAssets={totalAssets}");
             //Check for credit utilized greater than current available credit
-
 
             decimal creditUtiltizationRatio = currentUtilizedCredit / currentAvailableCredit;
             decimal debtToIncomeRatio = totalMonthlyPaymentAmounts / (annualIncome / 12);
@@ -341,6 +342,7 @@ namespace LoanLibrary
 
         public IEnumerable<InterestRate> GetInterestRates()
         {
+            LogMessage($"Getting interest rates");
             var interestRates = new List<InterestRate>();
             CreateDatabaseIfNotExists();
             using (var conn = GetDbConnection())
@@ -370,6 +372,7 @@ namespace LoanLibrary
 
         public decimal GetInterestRateForUser(int userId)
         {
+            LogMessage($"Getting interest rate for user {userId}");
             CreateDatabaseIfNotExists();
 
             using (var conn = GetDbConnection())
@@ -404,6 +407,19 @@ namespace LoanLibrary
             }
         }
 
+        private void LogMessage(string message)
+        {
+            CreateDatabaseIfNotExists();
+            using (var connection = GetDbConnection())
+            {
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.Text;
+                command.CommandText = "INSERT INTO Log (Message) VALUES (@Message)";
+                command.Parameters.AddWithValue("@Message", message);
+                command.ExecuteNonQuery();
+            }
+        }
+
         //Ben didn't write this code, but it's necessary to preload the data
         private void CreateDatabaseIfNotExists()
         {
@@ -416,7 +432,10 @@ namespace LoanLibrary
                     var command = new SQLiteCommand("CREATE TABLE InterestRates (Id INTEGER PRIMARY KEY AUTOINCREMENT, MaxRiskRating REAL, Rate REAL)", connection);
                     command.ExecuteNonQuery();
 
-                    command = new SQLiteCommand("CREATE TABLE Users (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name Text, TotalAvailableCredit REAL, CreditUtilized REAL, AnnualIncome REAL, TotalMonthlyPayments REAL, TotalAssets REAL)", connection);
+                    command = new SQLiteCommand("CREATE TABLE Users (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, TotalAvailableCredit REAL, CreditUtilized REAL, AnnualIncome REAL, TotalMonthlyPayments REAL, TotalAssets REAL)", connection);
+                    command.ExecuteNonQuery();
+
+                    command = new SQLiteCommand("CREATE TABLE Log (Id INTEGER PRIMARY KEY AUTOINCREMENT, Message TEXT)", connection);
                     command.ExecuteNonQuery();
 
                     var random = new Random();
