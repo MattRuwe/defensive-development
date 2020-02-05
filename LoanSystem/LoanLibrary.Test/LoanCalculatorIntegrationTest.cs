@@ -116,12 +116,15 @@ namespace LoanLibrary.Test
             //Arrange
 
             //Act
+            await _client.GetAsync("/api/Loan/CreateDatabase");
             var response = await _client.GetAsync("/api/Loan/InterestRates");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<IList<InterestRate>>(responseString);
+            
             //Assert
-            Assert.AreEqual(100, result.Count);
+            Assert.IsTrue(result.Count >= 5);
+            Assert.IsTrue(result.Count <= 10);
         }
     }
 
