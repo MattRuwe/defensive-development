@@ -9,12 +9,12 @@ using CodeAnalyzer;
 namespace CodeAnalyzer.Test
 {
     [TestClass]
-    public class UnitTest : CodeFixVerifier
+    public class IfStatementNestingRule : CodeFixVerifier
     {
 
         //No diagnostics expected to show up
         [TestMethod]
-        public void TestMethod1()
+        public void NoRuleViolationTest()
         {
             var test = @"";
 
@@ -23,7 +23,7 @@ namespace CodeAnalyzer.Test
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void IfStatementNestingLevelTest()
+        public void RuleViolationTest()
         {
             var test = @"
     using System;
@@ -64,11 +64,11 @@ namespace CodeAnalyzer.Test
                 Message = "The if statement nesting level is too high in method TestMethod",
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
-                    new[] {
-                            new DiagnosticResultLocation("Test0.cs", 15, 17)}
+                    new[] {new DiagnosticResultLocation("Test0.cs", 15, 17)}
             };
 
             VerifyCSharpDiagnostic(test, expected);
+        }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
