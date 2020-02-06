@@ -12,7 +12,7 @@ namespace LoanLibrary.Test
         [DataRow(2, 65.02, 248.34, 9753.31)]
         [DataRow(15, 42.62, 270.74, 6392.57)]
         [DataRow(30, 14.24, 299.12, 2136.32)]
-        [DataRow(036, 2.08, 311.28, 311.43)]
+        [DataRow(36, 2.08, 311.28, 311.43)]
         public void GetAmoritizationTest(int paymentNumber, double interest, double principal, double principalBalance)
         {
             //Arrange
@@ -20,11 +20,6 @@ namespace LoanLibrary.Test
 
             //Act
             var amoritization = calc.GetAmoritization().ToList();
-
-            foreach (var payment in amoritization)
-            {
-                Console.WriteLine($"{payment.PaymentNumber.ToString().PadLeft(3, '0')}-{payment.Interest + payment.Principal:C} {payment.Interest:C} {payment.Principal:C} {payment.PrincipalBalance:C}");
-            }
 
             //Assert
             var selectedPayment = amoritization[paymentNumber - 1];
