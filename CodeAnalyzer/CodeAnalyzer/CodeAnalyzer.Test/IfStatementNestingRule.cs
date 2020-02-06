@@ -9,7 +9,7 @@ using CodeAnalyzer;
 namespace CodeAnalyzer.Test
 {
     [TestClass]
-    public class IfStatementNestingRule : CodeFixVerifier
+    public class ExcessiveNestedLogicAnalyzerTest : CodeFixVerifier
     {
 
         //No diagnostics expected to show up
@@ -72,7 +72,7 @@ namespace CodeAnalyzer.Test
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CodeAnalyzerAnalyzer();
+            return new ExcessiveNestedLogicAnalyzer();
         }
     }
 }

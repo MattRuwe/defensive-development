@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace CodeAnalyzer
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    public class ExcessiveNestedLogicAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "CodeAnalyzer";
 
