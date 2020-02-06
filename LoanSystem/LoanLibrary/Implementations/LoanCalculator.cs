@@ -19,7 +19,7 @@ namespace LoanLibrary.Implementations
         {
             var currentPricinpalBalance = loanFundamentals.Principal;
             var returnValue = new List<Payment>();
-            var paymentAmount = CalculateMonthlyPayment(currentPricinpalBalance, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            var paymentAmount = CalculateMonthlyPayment(loanFundamentals);
             for (int i = 1; i <= loanFundamentals.TermInMonths; i++)
             {
                 var interestAmount = currentPricinpalBalance * (loanFundamentals.InterestRate / 12);
