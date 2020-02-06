@@ -5,7 +5,6 @@ using LoanLibrary.Contracts;
 using LoanLibrary.DataContracts;
 using LoanLibrary.DataModel;
 using Microsoft.AspNetCore.Mvc;
-using LoanFundamentals = API.DataContracts.LoanFundamentals;
 
 namespace API.Controllers
 {
@@ -23,33 +22,47 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<decimal> GetPayment(LoanFundamentals loanFundamentals)
+        public ActionResult<decimal> GetPayment(ApiLoanFundamentals apiLoanFundamentals)
         {
-            var payment = _loanCalculator.CalculateMonthlyPayment(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            var loanFundamentals = new LoanFundamentals()
+            {
+                Principal = apiLoanFundamentals.Principal,
+                InterestRate = apiLoanFundamentals.InterestRate,
+                TermInMonths = apiLoanFundamentals.TermInMonths
+            };
+
+            var payment = _loanCalculator.CalculateMonthlyPayment(loanFundamentals);
 
             return Ok(payment);
         }
 
         [HttpPost("AmortizationSchedule")]
-        public ActionResult<IEnumerable<Payment>> AmortizationSchedule(LoanFundamentals loanFundamentals)
+        public ActionResult<IEnumerable<Payment>> AmortizationSchedule(ApiLoanFundamentals apiLoanFundamentals)
         {
-            var payments = _loanCalculator.GetAmoritization(loanFundamentals.Principal, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            var loanFundamentals = new LoanFundamentals()
+            {
+                Principal = apiLoanFundamentals.Principal,
+                InterestRate = apiLoanFundamentals.InterestRate,
+                TermInMonths = apiLoanFundamentals.TermInMonths
+            };
+
+            var payments = _loanCalculator.GetAmoritization(loanFundamentals);
 
             return Ok(payments);
         }
 
         [HttpPost("Risk")]
-        public ActionResult<decimal> CalculateRisk(LoaneeCharacterisitic loaneeCharacterisitic)
+        public ActionResult<decimal> CalculateRisk(ApiRiskFactors apiRiskFactors)
         {
 
             var riskFactors = new RiskFactors()
             {
-                AnnualIncome = loaneeCharacterisitic.AnnualIncome,
-                TotalAssets = loaneeCharacterisitic.TotalAssets,
-                CurrentUtilizedCredit = loaneeCharacterisitic.CurrentUtilizedCredit,
-                CurrentAvailableCredit = loaneeCharacterisitic.CurrentAvailableCredit,
-                MissedPayments = loaneeCharacterisitic.MissedPayments,
-                TotalMonthlyPaymentAmounts = loaneeCharacterisitic.TotalMonthlyPaymentAmounts
+                AnnualIncome = apiRiskFactors.AnnualIncome,
+                TotalAssets = apiRiskFactors.TotalAssets,
+                CurrentUtilizedCredit = apiRiskFactors.CurrentUtilizedCredit,
+                CurrentAvailableCredit = apiRiskFactors.CurrentAvailableCredit,
+                MissedPayments = apiRiskFactors.MissedPayments,
+                TotalMonthlyPaymentAmounts = apiRiskFactors.TotalMonthlyPaymentAmounts
             };
 
             var risk = _loanCalculator.CalculateRisk(riskFactors);

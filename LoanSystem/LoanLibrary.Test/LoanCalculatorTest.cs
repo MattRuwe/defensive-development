@@ -40,9 +40,14 @@ namespace LoanLibrary.Test
         {
             //Arrange
             var calc = _serviceProvider.GetService<ILoanCalculator>();
-
+            var loanFundamentals = new LoanFundamentals()
+            {
+                Principal = 10000m,
+                InterestRate = 0.08m,
+                TermInMonths = 36
+            };
             //Act
-            var amoritization = calc.GetAmoritization(10000, 0.08m, 36).ToList();
+            var amoritization = calc.GetAmoritization(loanFundamentals).ToList();
 
             foreach (var payment in amoritization)
             {
@@ -61,9 +66,15 @@ namespace LoanLibrary.Test
         {
             //Arrange
             var calc = _serviceProvider.GetService<ILoanCalculator>();
+            var loanFundamentals = new LoanFundamentals()
+            {
+                Principal = 10000m,
+                InterestRate = 0.08m,
+                TermInMonths = 36
+            };
 
             //Act
-            var payment = calc.CalculateMonthlyPayment(10000, 0.08m, 36);
+            var payment = calc.CalculateMonthlyPayment(loanFundamentals);
 
             //Assert
             Assert.AreEqual(313.36m, payment);

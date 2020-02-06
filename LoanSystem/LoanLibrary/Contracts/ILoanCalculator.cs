@@ -5,8 +5,8 @@ namespace LoanLibrary.Contracts
 {
     public interface ILoanCalculator
     {
-        List<Payment> GetAmoritization(decimal loanAmount, decimal interestRate, int termInMonths);
-        decimal CalculateMonthlyPayment(decimal loanAmount, decimal interestRate, int termInMonths);
+        List<Payment> GetAmoritization(LoanFundamentals loanFundamentals);
+        decimal CalculateMonthlyPayment(LoanFundamentals loanFundamentals);
         decimal CalculateRisk(RiskFactors riskFactors);
         decimal GetInterestRateForUser(int userId);
     }

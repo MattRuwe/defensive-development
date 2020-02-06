@@ -15,14 +15,14 @@ namespace LoanLibrary.Implementations
             _dataAccess = dataAccess;
         }
 
-        public List<Payment> GetAmoritization(decimal loanAmount, decimal interestRate, int termInMonths)
+        public List<Payment> GetAmoritization(LoanFundamentals loanFundamentals)
         {
-            var currentPricinpalBalance = loanAmount;
+            var currentPricinpalBalance = loanFundamentals.Principal;
             var returnValue = new List<Payment>();
-            var paymentAmount = CalculateMonthlyPayment(loanAmount, interestRate, termInMonths);
-            for (int i = 1; i <= termInMonths; i++)
+            var paymentAmount = CalculateMonthlyPayment(currentPricinpalBalance, loanFundamentals.InterestRate, loanFundamentals.TermInMonths);
+            for (int i = 1; i <= loanFundamentals.TermInMonths; i++)
             {
-                var interestAmount = currentPricinpalBalance * (interestRate / 12);
+                var interestAmount = currentPricinpalBalance * (loanFundamentals.InterestRate / 12);
                 var principleAmount = paymentAmount - interestAmount;
                 returnValue.Add(new Payment()
                 {
@@ -38,10 +38,10 @@ namespace LoanLibrary.Implementations
             return returnValue;
         }
 
-        public decimal CalculateMonthlyPayment(decimal loanAmount, decimal interestRate, int termInMonths)
+        public decimal CalculateMonthlyPayment(LoanFundamentals loanFundamentals)
         {
-            var monthlyInterestRate = (double)(interestRate / 12);
-            var payment = (monthlyInterestRate * (double)loanAmount) / (1 - Math.Pow(1 + monthlyInterestRate, termInMonths * -1));
+            var monthlyInterestRate = (double)(loanFundamentals.InterestRate / 12);
+            var payment = (monthlyInterestRate * (double)loanFundamentals.Principal) / (1 - Math.Pow(1 + monthlyInterestRate, loanFundamentals.TermInMonths * -1));
             return (decimal)Math.Round(payment, 2);
         }
 

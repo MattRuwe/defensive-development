@@ -84,7 +84,7 @@ namespace LoanLibrary.Test
         public async Task CalculateRiskTest()
         {
             //Arrange
-            var loaneeCharacterisitic = new LoaneeCharacterisitic()
+            var loaneeCharacterisitic = new ApiRiskFactors()
             {
                 AnnualIncome = 100000m,
                 CurrentAvailableCredit = 5000m,

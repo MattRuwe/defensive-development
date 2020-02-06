@@ -4,7 +4,7 @@ using LoanLibrary.DataContracts;
 
 namespace API.DataContracts
 {
-    public class LoaneeCharacterisitic
+    public class ApiRiskFactors
     {
         public decimal CurrentAvailableCredit { get; set; }
         public decimal CurrentUtilizedCredit { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace API.DataContracts
 {
-    public class LoanFundamentals
+    public class ApiLoanFundamentals
     {
         public decimal Principal { get; set; }
         public decimal InterestRate { get; set; }
